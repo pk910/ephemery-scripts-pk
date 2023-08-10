@@ -1,0 +1,195 @@
+#cloud-config
+packages:
+  - git
+  - make
+  - cmake
+  - g++
+  - pkg-config
+  - llvm-dev
+  - libclang-dev
+  - clang
+  - protobuf-compiler
+  - gcc
+  - libc6-dev
+  - sudo
+users:
+  - name: pk910
+    primary-group: users
+    shell: /bin/bash
+    uid: "1000"
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCaGa3CFThBknOqAWqn8G4qHcl/U1Lm9CUjZ+zG+CxnBDT6K6CVgHkjEHru7gkrP7LrDKQI7JPPPSO/+ozUWcCoBomjzZ4w2inelUverCRHe2iZBSP9RNqVRc4p2F3NIiOblzYUiXYdXu1I0zFNe4jvkjTtlZ6gb8PiDqUmMs4hRWfIG88ahhwHnBeqEECK0TNra4h4n6wq0rvkGj21xSH0CXw4X6O2a5tdARbAsrMA1pQISX4AKniHcMCAo+gqobXHeN2sP2JMq8SrszjkzH/Xj/vMtBe/iD+eCexPVXRfkMrxtZxseazkJDTB6E6DVoNOZPfqs4RyjE8MahWh3UI/ pk910_root
+  - name: etherum
+    home: /home/etherum
+    shell: /bin/bash
+    uid: "1001"
+write_files:
+  - path: /etc/ssh/sshd_config.d/pknet-ssh.conf
+    content: |
+      Port 16110
+  - path: /etc/sudoers.d/pk910
+    content: |
+      pk910    ALL=(ALL) NOPASSWD: ALL
+  - path: /etc/sudoers.d/pk910
+    content: |
+      # User privilege specification
+      pk910    ALL=(ALL) NOPASSWD: ALL
+  - path: /etc/sudoers.d/etherum
+    content: |
+      # Cmnd alias specification
+      Cmnd_Alias ETH_CMDS = /bin/systemctl stop nethermind, /bin/systemctl start nethermind, /bin/systemctl stop beacon-chain, /bin/systemctl start beacon-chain, /bin/systemctl stop validator, /bin/systemctl start validator, /bin/systemctl stop boot-node, /bin/systemctl start boot-node
+
+      # User privilege specification
+      etherum    ALL=(ALL) NOPASSWD: ETH_CMDS
+  - path: /etc/systemd/system/nethermind.service
+    content: |
+      [Unit]
+      Description     = nethermind eth1 service
+      Wants           = network-online.target
+      After           = network-online.target
+
+      [Service]
+      User            = etherum
+      WorkingDirectory= /home/etherum/nethermind
+      EnvironmentFile = /home/etherum/testnet/nodevars_env.txt
+      ExecStart       = /home/etherum/nethermind/nethermind --datadir /home/etherum/data-nethermind --port 30303 --http --http.port 8545 --authrpc.jwtsecret=/home/etherum/jwtsecret  --private.api.addr 127.0.0.1:9091 --authrpc.port 8551 --bootnodes "${BOOTNODE_ENODE_LIST}" --networkid ${CHAIN_ID} --externalcl
+      Restart         = on-failure
+
+      [Install]
+      WantedBy= multi-user.target
+  - path: /etc/systemd/system/beacon-chain.service
+    content: |
+      [Unit]
+      Description     = eth2 beacon chain service
+      Wants           = network-online.target
+      After           = network-online.target
+
+      [Service]
+      User            = etherum
+      WorkingDirectory= /home/etherum/lighthouse
+      EnvironmentFile = /home/etherum/testnet/nodevars_env.txt
+      ExecStart       = /home/etherum/lighthouse/lighthouse bn --testnet-dir /home/etherum/testnet --datadir /home/etherum/data-lh --staking --metrics --port 9010 --http-address 0.0.0.0 --metrics-address 0.0.0.0 --execution-endpoint http://127.0.0.1:8551 --execution-jwt="/home/etherum/jwtsecret" --boot-nodes ${BOOTNODE_ENR_LIST}
+      Restart         = on-failure
+
+      [Install]
+      WantedBy= multi-user.target
+  - path: /etc/systemd/system/validator.service
+    content: |
+      [Unit]
+      Description     = eth2 validator service
+      Wants           = network-online.target beacon-chain.service
+      After           = network-online.target
+
+      [Service]
+      User            = etherum
+      WorkingDirectory= /home/etherum/lighthouse
+      ExecStart       = /home/etherum/lighthouse/lighthouse vc --testnet-dir /home/etherum/testnet --datadir /home/etherum/data-lh --beacon-nodes "http://localhost:5052" --graffiti "pk910 (2)" --suggested-fee-recipient 0x14627ea0e2B27b817DbfF94c3dA383bB73F8C30b --init-slashing-protection --allow-unsynced
+      Restart         = on-failure
+
+      [Install]
+      WantedBy= multi-user.target
+  - path: /root/setup.sh
+    content: |
+      #!/bin/bash
+      wget https://raw.githubusercontent.com/ephemery-testnet/ephemery-scripts/master/resources/setup-services.sh
+      source ./setup-services.sh
+
+      setup_dotnet
+
+  - path: /home/etherum/setup.sh
+    content: |
+      #!/bin/bash
+      cd ~
+      if ! [ -f ./setup-clients.sh ]; then
+        wget https://raw.githubusercontent.com/ephemery-testnet/ephemery-scripts/master/resources/setup-clients.sh
+      fi
+      source ./setup-clients.sh
+      src_link_path="$(pwd)"
+      mkdir -p src
+      cd src
+
+      setup_golang
+      setup_rust
+      setup_nethermind
+      setup_lighthouse
+
+  - path: /home/etherum/retention.sh
+    content: |
+      #!/bin/bash
+
+      genesis_repository="ephemery-testnet/ephemery-genesis"
+      testnet_dir=/home/etherum/testnet
+      el_datadir=/home/etherum/data-nethermind
+      cl_datadir=/home/etherum/data-lh
+      cl_port=5052
+
+      start_clients() {
+        # start EL / CL clients
+        echo "start clients"
+        sudo /bin/systemctl start nethermind
+        sudo /bin/systemctl start beacon-chain
+        sudo /bin/systemctl start validator
+      }
+
+      stop_clients() {
+        # stop EL / CL clients
+        echo "stop clients"
+        sudo /bin/systemctl stop nethermind
+        sudo /bin/systemctl stop beacon-chain
+        sudo /bin/systemctl stop validator
+      }
+
+      clear_datadirs() {
+        if [ -d $el_datadir/nethermind ]; then
+          nethermind_nodekey=$(cat $el_datadir/nethermind/nodekey)
+          rm -rf $el_datadir/nethermind
+          mkdir $el_datadir/nethermind
+          echo $nethermind_nodekey > $el_datadir/nethermind/nodekey
+        fi
+
+        rm -rf $cl_datadir/beacon
+        rm -rf $cl_datadir/validators/slashing_protection.sqlite
+      }
+
+      setup_genesis() {
+        # init el genesis
+        ~/nethermind/nethermind init --datadir $el_datadir $testnet_dir/genesis.json
+      }
+
+      source ~/retention-lib.sh
+      retention_main
+
+  - path: /home/etherum/setup-retention.sh
+    content: |
+      #!/bin/bash
+      cd /home/etherum
+      chmod +x retention.sh
+      wget https://raw.githubusercontent.com/ephemery-testnet/ephemery-scripts/master/resources/retention-lib.sh
+      ./retention.sh
+      (2>/dev/null crontab -l ; echo "*/5 * * * * /home/etherum/retention.sh") | crontab -
+  - path: /home/etherum/setup-validators.sh
+    content: |
+      #!/bin/bash
+      cd /home/etherum
+
+      # ADD YOUR VALIDATOR MNEMONIC HERE
+      validator_mnemonic=""
+      validator_count=100
+
+      if [ ! -z "$validator_mnemonic" ]; then
+        echo $validator_mnemonic | lighthouse/lighthouse account validator recover --datadir /home/etherum/data-lh --stdin-inputs --count $validator_count
+      fi
+runcmd:
+  - [ chown, -R, "etherum:etherum", /home/etherum ]
+  - [ chmod, +x, /home/etherum/setup.sh ]
+  - [ sudo, -u, etherum, /home/etherum/setup.sh ]
+  - [ systemctl, daemon-reload ]
+  - [ systemctl, enable, nethermind.service ]
+  - [ systemctl, enable, beacon-chain.service ]
+  - [ systemctl, enable, validator.service ]
+  - [ chmod, +x, /home/etherum/setup-validators.sh ]
+  - [ sudo, -u, etherum, /home/etherum/setup-validators.sh ]
+  - [ chmod, +x, /home/etherum/setup-retention.sh ]
+  - [ sudo, -u, etherum, /home/etherum/setup-retention.sh ]
+
+

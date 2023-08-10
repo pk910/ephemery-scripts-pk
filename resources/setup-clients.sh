@@ -6,6 +6,8 @@ get_github_release() {
     sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
 }
 
+
+
 src_link_path=""
 src_need_build="no"
 
@@ -181,6 +183,54 @@ setup_erigon() {
 
   cd $base_dir
 }
+
+setup_nethermind() {
+  # update nethermind
+  local base_dir=$(pwd)
+  local link_path=""
+  mkdir -p nethermind
+  cd nethermind
+
+  setup_version="${1:-latest}"
+  if [ "$setup_version" = "latest" ]; then
+    setup_version=$(get_github_release NethermindEth/nethermind)
+  fi
+
+  src_need_build="no"
+  if [ "$setup_version" = "git" ]; then
+    echo "building nethermind from source is not supported yet."
+    #src_reset_git "git" "${3:-"https://github.com/NethermindEth/nethermind.git"}" "${2:-master}"
+    #cd git
+    #setup_version="git-$(git branch --show-current)-$(git rev-list HEAD | head -n 1 | head -c 10)"
+    #link_path="$(pwd)/build"
+  else
+    if [ ! -z "$setup_version" ] && [ ! -d "$setup_version" ]; then
+      # get asset name (they have the commit hash within the filename, so we cannot construct it outselves here)
+      dlurl=$(curl --silent "https://api.github.com/repos/NethermindEth/nethermind/releases/latest" | grep '"browser_download_url":' | grep '\-linux-x64.zip' | sed -E 's/.*"([^"]+)".*/\1/')
+      wget $dlurl
+      mkdir $setup_version
+      cd $setup_version
+      unzip ../nethermind-${setup_version}-*.zip
+    else
+      cd $setup_version
+    fi
+    link_path="$(pwd)"
+  fi
+  echo "setup nethermind: ${setup_version}  (build: ${src_need_build})"
+
+  if [ "$src_need_build" = "yes" ]; then
+    echo "building nethermind from source is not supported yet"
+    # TODO
+  fi
+
+  if [ ! -z "$src_link_path" ] && [ ! -z "$link_path" ] && [ -d "$link_path" ]; then
+    rm "$src_link_path/nethermind" 2> /dev/null
+    ln -s "$link_path" "$src_link_path/nethermind"
+  fi
+
+  cd $base_dir
+}
+
 
 setup_lighthouse() {
   # update lighthouse

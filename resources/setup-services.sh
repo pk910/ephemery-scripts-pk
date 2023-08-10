@@ -9,6 +9,14 @@ setup_docker() {
   apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 }
 
+setup_dotnet() {
+  # install dotnet
+  wget -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.asc.gpg
+  wget -O - https://packages.microsoft.com/config/debian/10/prod.list > /etc/apt/sources.list.d/microsoft-prod.list
+  apt-get update
+  apt-get install -y dotnet-sdk-7.0
+}
+
 setup_pgsql() {
   # setup database server
   echo "listen_addresses = '*'" >> /etc/postgresql/13/main/postgresql.conf
