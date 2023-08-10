@@ -1,0 +1,7 @@
+
+
+- name: Generate retention.sh
+  ansible.builtin.template:
+    src: /templates/retention.sh.j2
+    dest: "{{ ephemery_node_retention_scriptdir }}/file.conf"
+    mode: '0755'

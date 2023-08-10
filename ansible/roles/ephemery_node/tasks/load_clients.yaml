@@ -1,0 +1,155 @@
+# just reference the roles here but dont run them (when: false)
+# we're just interested in variables, docker images are started via the retention script
+
+# CL clients
+
+- name: "Consensus client: lighthouse"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.lighthouse
+  vars:
+    lighthouse_announced_ip: "{{ ephemery_node_announced_ip }}"
+    lighthouse_ports_p2p_tcp: "{{ ephemery_node_cl_ports_p2p_tcp }}"
+    lighthouse_ports_p2p_udp: "{{ ephemery_node_cl_ports_p2p_udp }}"
+    lighthouse_ports_http_beacon: "{{ ephemery_node_cl_ports_http_beacon }}"
+    lighthouse_ports_metrics: "{{ ephemery_node_cl_ports_metrics }}"
+    lighthouse_container_networks: "{{ ephemery_node_docker_networks }}"
+    lighthouse_container_pull: "{{ ephemery_node_images_always_pull }}"
+    lighthouse_execution_engine_endpoint: "{{ ephemery_node_execution_engine_endpoint }}"
+    lighthouse_validator_enabled: "{{ ephemery_node_cl_validator_enabled }}"
+    lighthouse_validator_container_networks: "{{ ephemery_node_docker_networks }}"
+    lighthouse_validator_fee_recipient: "{{ ephemery_node_cl_validator_fee_recipient }}"
+
+- name: "Consensus client: teku"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.teku
+  vars:
+    teku_announced_ip: "{{ ephemery_node_announced_ip }}"
+    teku_ports_p2p_tcp: "{{ ephemery_node_cl_ports_p2p_tcp }}"
+    teku_ports_p2p_udp: "{{ ephemery_node_cl_ports_p2p_udp }}"
+    teku_ports_http_beacon: "{{ ephemery_node_cl_ports_http_beacon }}"
+    teku_ports_metrics: "{{ ephemery_node_cl_ports_metrics }}"
+    teku_container_networks: "{{ ephemery_node_docker_networks }}"
+    teku_container_pull: "{{ ephemery_node_images_always_pull }}"
+    teku_execution_engine_endpoint: "{{ ephemery_node_execution_engine_endpoint }}"
+    teku_validator_enabled: "{{ ephemery_node_cl_validator_enabled }}"
+    teku_validator_container_networks: "{{ ephemery_node_docker_networks }}"
+    teku_validator_fee_recipient: "{{ ephemery_node_cl_validator_fee_recipient }}"
+
+- name: "Consensus client: prysm"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.prysm
+  vars:
+    prysm_announced_ip: "{{ ephemery_node_announced_ip }}"
+    prysm_ports_p2p_tcp: "{{ ephemery_node_cl_ports_p2p_tcp }}"
+    prysm_ports_p2p_udp: "{{ ephemery_node_cl_ports_p2p_udp }}"
+    prysm_ports_http_beacon: "{{ ephemery_node_cl_ports_http_beacon }}"
+    prysm_ports_metrics: "{{ ephemery_node_cl_ports_metrics }}"
+    prysm_container_networks: "{{ ephemery_node_docker_networks }}"
+    prysm_container_pull: "{{ ephemery_node_images_always_pull }}"
+    prysm_execution_engine_endpoint: "{{ ephemery_node_execution_engine_endpoint }}"
+    prysm_validator_enabled: "{{ ephemery_node_cl_validator_enabled }}"
+    prysm_validator_container_networks: "{{ ephemery_node_docker_networks }}"
+    prysm_validator_fee_recipient: "{{ ephemery_node_cl_validator_fee_recipient }}"
+
+- name: "Consensus client: lodestar"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.lodestar
+  vars:
+    lodestar_announced_ip: "{{ ephemery_node_announced_ip }}"
+    lodestar_ports_p2p_tcp: "{{ ephemery_node_cl_ports_p2p_tcp }}"
+    lodestar_ports_p2p_udp: "{{ ephemery_node_cl_ports_p2p_udp }}"
+    lodestar_ports_http_beacon: "{{ ephemery_node_cl_ports_http_beacon }}"
+    lodestar_ports_metrics: "{{ ephemery_node_cl_ports_metrics }}"
+    lodestar_container_networks: "{{ ephemery_node_docker_networks }}"
+    lodestar_container_pull: "{{ ephemery_node_images_always_pull }}"
+    lodestar_execution_engine_endpoint: "{{ ephemery_node_execution_engine_endpoint }}"
+    lodestar_validator_enabled: "{{ ephemery_node_cl_validator_enabled }}"
+    lodestar_validator_container_networks: "{{ ephemery_node_docker_networks }}"
+    lodestar_validator_fee_recipient: "{{ ephemery_node_cl_validator_fee_recipient }}"
+
+- name: "Consensus client: nimbus"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.nimbus
+  vars:
+    nimbus_announced_ip: "{{ ephemery_node_announced_ip }}"
+    nimbus_ports_p2p_tcp: "{{ ephemery_node_cl_ports_p2p_tcp }}"
+    nimbus_ports_p2p_udp: "{{ ephemery_node_cl_ports_p2p_udp }}"
+    nimbus_ports_http_beacon: "{{ ephemery_node_cl_ports_http_beacon }}"
+    nimbus_ports_metrics: "{{ ephemery_node_cl_ports_metrics }}"
+    nimbus_container_networks: "{{ ephemery_node_docker_networks }}"
+    nimbus_container_pull: "{{ ephemery_node_images_always_pull }}"
+    nimbus_execution_engine_endpoint: "{{ ephemery_node_execution_engine_endpoint }}"
+    nimbus_validator_enabled: "{{ ephemery_node_cl_validator_enabled }}"
+    nimbus_validator_container_networks: "{{ ephemery_node_docker_networks }}"
+    nimbus_validator_fee_recipient: "{{ ephemery_node_cl_validator_fee_recipient }}"
+
+# EL Clients
+
+- name: "Execution client: besu"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.besu
+  vars:
+    besu_announced_ip: "{{ ephemery_node_announced_ip }}"
+    besu_ports_p2p: "{{ ephemery_node_el_ports_p2p_tcp }}"
+    besu_ports_http_rpc: "{{ ephemery_node_el_ports_http_rpc }}"
+    besu_ports_engine: "{{ ephemery_node_el_ports_engine }}"
+    besu_ports_metrics: "{{ ephemery_node_el_ports_metrics }}"
+    besu_container_networks: "{{ ephemery_node_docker_networks }}"
+    besu_container_pull: "{{ ephemery_node_images_always_pull }}"
+
+- name: "Execution client: geth"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.geth
+  vars:
+    geth_announced_ip: "{{ ephemery_node_announced_ip }}"
+    geth_ports_p2p: "{{ ephemery_node_el_ports_p2p_tcp }}"
+    geth_ports_http_rpc: "{{ ephemery_node_el_ports_http_rpc }}"
+    geth_ports_engine: "{{ ephemery_node_el_ports_engine }}"
+    geth_ports_metrics: "{{ ephemery_node_el_ports_metrics }}"
+    geth_container_networks: "{{ ephemery_node_docker_networks }}"
+    geth_container_pull: "{{ ephemery_node_images_always_pull }}"
+
+- name: "Execution client: erigon"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.erigon
+  vars:
+    erigon_announced_ip: "{{ ephemery_node_announced_ip }}"
+    erigon_ports_p2p: "{{ ephemery_node_el_ports_p2p_tcp }}"
+    erigon_ports_http_rpc: "{{ ephemery_node_el_ports_http_rpc }}"
+    erigon_ports_engine: "{{ ephemery_node_el_ports_engine }}"
+    erigon_ports_metrics: "{{ ephemery_node_el_ports_metrics }}"
+    erigon_container_networks: "{{ ephemery_node_docker_networks }}"
+    erigon_container_pull: "{{ ephemery_node_images_always_pull }}"
+
+- name: "Execution client: nethermind"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.nethermind
+  vars:
+    nethermind_announced_ip: "{{ ephemery_node_announced_ip }}"
+    nethermind_ports_p2p: "{{ ephemery_node_el_ports_p2p_tcp }}"
+    nethermind_ports_http_rpc: "{{ ephemery_node_el_ports_http_rpc }}"
+    nethermind_ports_engine: "{{ ephemery_node_el_ports_engine }}"
+    nethermind_ports_metrics: "{{ ephemery_node_el_ports_metrics }}"
+    nethermind_container_networks: "{{ ephemery_node_docker_networks }}"
+    nethermind_container_pull: "{{ ephemery_node_images_always_pull }}"
+
+- name: "Execution client: ethereumjs"
+  when: false
+  ansible.builtin.include_role:
+    name: ethpandaops.general.ethereumjs
+  vars:
+    ethereumjs_announced_ip: "{{ ephemery_node_announced_ip }}"
+    ethereumjs_ports_p2p: "{{ ephemery_node_el_ports_p2p_tcp }}"
+    ethereumjs_ports_http_rpc: "{{ ephemery_node_el_ports_http_rpc }}"
+    ethereumjs_ports_engine: "{{ ephemery_node_el_ports_engine }}"
+    ethereumjs_container_networks: "{{ ephemery_node_docker_networks }}"
+    ethereumjs_container_pull: "{{ ephemery_node_images_always_pull }}"

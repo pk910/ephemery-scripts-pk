@@ -1,0 +1,15 @@
+- name: Check defined execution client
+  ansible.builtin.assert:
+    that:
+      - ephemery_node_el in ephemery_node_supported_el
+    success_msg: "{{ ephemery_node_el }} is a supported client"
+    fail_msg: >
+      ephemery_node_el = '{{ ephemery_node_el }}' is invalid. You can choose between: '{{ ephemery_node_supported_el }}'
+
+- name: Check defined consensus client
+  ansible.builtin.assert:
+    that:
+      - ephemery_node_cl in ephemery_node_supported_cl
+    success_msg: "{{ ephemery_node_cl }} is a supported client"
+    fail_msg: >
+      ephemery_node_el = '{{ ephemery_node_cl }}' is invalid. You can choose between: '{{ ephemery_node_supported_cl }}'

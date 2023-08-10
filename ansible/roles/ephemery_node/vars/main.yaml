@@ -1,0 +1,19 @@
+ephemery_node_supported_el:
+  - besu
+  - geth
+  - erigon
+  - nethermind
+  - ethereumjs
+
+ephemery_node_supported_cl:
+  - lighthouse
+  - teku
+  - prysm
+  - lodestar
+  - nimbus
+
+ephemery_node_docker_networks:
+  - name: "{{ ephemery_node_docker_network_name }}"
+
+ephemery_node_execution_engine_endpoint: >-
+  {{ ephemery_node_json_rpc_snooper_engine_enabled | ternary(ephemery_node_el_engine_snooper_endpoint, ephemery_node_el_engine_endpoint) }}
