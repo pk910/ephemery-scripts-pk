@@ -3,6 +3,11 @@ ephemery_node_docker_network_name: shared
 ephemery_node_skip_cleanup: false
 ephemery_node_images_always_pull: false
 
+# Ephemery config
+ephemery_node_genesis_repository: "ephemery-testnet/ephemery-genesis"
+ephemery_node_genesis_datadir: /data/ephemery-config
+ephemery_node_retention_scriptdir: /data/ephemery-retention
+
 # Execution layer client
 ephemery_node_el: geth # Valid options: besu, geth, erigon, nethermind
 ephemery_node_el_enabled: true
