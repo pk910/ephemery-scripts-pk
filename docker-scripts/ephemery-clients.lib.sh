@@ -105,8 +105,21 @@ ephemery_node_main() {
   stop-cl)
     call_client_fn $selected_cl_client "stop"
     ;;
+  reset)
+    call_client_fn $selected_el_client "reset"
+    call_client_fn $selected_cl_client "reset"
+    ;;
+  reset-el)
+    call_client_fn $selected_el_client "reset"
+    ;;
+  reset-cl)
+    call_client_fn $selected_cl_client "reset"
+    ;;
+  init)
+    call_client_fn $selected_el_client "init"
+    ;;
   *)
-    echo "unknown action. supported actions: retention, load-genesis, start, start-el, start-cl, stop, stop-el, stop-cl"
+    echo "unknown action. supported actions: retention, load-genesis, start, start-el, start-cl, stop, stop-el, stop-cl, reset, reset-el, reset-cl, init"
     ;;
   esac
 }
