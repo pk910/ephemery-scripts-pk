@@ -61,7 +61,7 @@ get_github_release() {
     head -n 1
 }
 
-download_ephemery_genesis() {
+download_testnet_genesis() {
   local genesis_release=$1
   local testnet_dir=$(resolve_path "$testnet_configdir")
 
@@ -74,6 +74,41 @@ download_ephemery_genesis() {
 
   # get latest genesis
   wget -qO- https://github.com/$testnet_repository/releases/download/$genesis_release/testnet-all.tar.gz | tar xz -C $testnet_dir
+}
+
+# main function
+ephemery_node_main() {
+  case "$1" in
+  retention)
+    retention_main
+    ;;
+  load-genesis)
+    download_testnet_genesis $(get_github_release $testnet_repository)
+    ;;
+  start)
+    call_client_fn $selected_el_client "start"
+    call_client_fn $selected_cl_client "start"
+    ;;
+  start-el)
+    call_client_fn $selected_el_client "start"
+    ;;
+  start-cl)
+    call_client_fn $selected_cl_client "start"
+    ;;
+  stop)
+    call_client_fn $selected_el_client "stop"
+    call_client_fn $selected_cl_client "stop"
+    ;;
+  stop-el)
+    call_client_fn $selected_el_client "stop"
+    ;;
+  stop-cl)
+    call_client_fn $selected_cl_client "stop"
+    ;;
+  *)
+    echo "unknown action. supported actions: retention, load-genesis, start, start-el, start-cl, stop, stop-el, stop-cl"
+    ;;
+  esac
 }
 
 # retention logic
@@ -117,7 +152,7 @@ retention_reset() {
   call_client_fn $selected_el_client "clear"
   call_client_fn $selected_cl_client "clear"
 
-  download_ephemery_genesis $genesis_release
+  download_testnet_genesis $genesis_release
   call_client_fn $selected_el_client "init"
 
   call_client_fn $selected_el_client "start"
@@ -254,9 +289,6 @@ client_besu_clear() {
     rm -rf $datadir/*
   fi
 }
-client_besu_init() {
-  echo "" > /dev/null # no init
-}
 
 # erigon
 client_erigon_name="erigon"
@@ -379,9 +411,6 @@ client_nethermind_clear() {
     rm -rf $datadir/*
   fi
 }
-client_nethermind_init() {
-  echo "" > /dev/null # no init
-}
 
 # ethereumjs
 client_ethereumjs_name="ethereumjs"
@@ -432,9 +461,6 @@ client_ethereumjs_clear() {
   if [ -d $datadir ]; then
     rm -rf $datadir/*
   fi
-}
-client_ethereumjs_init() {
-  echo "" > /dev/null # no init
 }
 
 # CL Clients
