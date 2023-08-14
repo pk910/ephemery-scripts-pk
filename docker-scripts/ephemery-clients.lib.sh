@@ -189,7 +189,12 @@ client_geth_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    CHAIN_ID=`cat $confdir/config.yaml | grep CHAIN_ID | sed 's/.*\: *//'`
+    BOOTNODE_ENODE_LIST=`cat $confdir/bootnode.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -254,7 +259,11 @@ client_besu_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENODE_LIST=`cat $confdir/bootnode.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -304,7 +313,12 @@ client_erigon_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    CHAIN_ID=`cat $confdir/config.yaml | grep CHAIN_ID | sed 's/.*\: *//'`
+    BOOTNODE_ENODE_LIST=`cat $confdir/bootnode.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -371,7 +385,11 @@ client_nethermind_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENODE_LIST=`cat $confdir/bootnode.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -426,7 +444,11 @@ client_ethereumjs_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENODE_LIST=`cat $confdir/bootnode.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -478,7 +500,11 @@ client_lighthouse_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENR_LIST=`cat $confdir/bootstrap_nodes.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -530,7 +556,11 @@ client_prysm_start() {
   local dcblock=$(cat "$confdir/deposit_contract_block.txt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENR=`head -n 1 $confdir/bootstrap_nodes.txt`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -583,7 +613,11 @@ client_teku_start() {
   local jwtfile=$(resolve_path "$engine_auth_jwt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENR_LIST=`cat $confdir/bootstrap_nodes.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -635,7 +669,11 @@ client_lodestar_start() {
   local dcblock=$(cat "$confdir/deposit_contract_block.txt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENR_LIST=`cat $confdir/bootstrap_nodes.txt | sed -E '/^$/d' | tr '\n' ',' | sed 's/,$//'`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
@@ -689,7 +727,11 @@ client_nimbus_start() {
   local dcblock=$(cat "$confdir/deposit_contract_block.txt")
   ensure_jwtsecret $jwtfile
   ensure_extip
-  source $confdir/nodevars_env.txt
+  if [ -f $confdir/nodevars_env.txt ]; then
+    source $confdir/nodevars_env.txt
+  else
+    BOOTNODE_ENR=`head -n 1 $confdir/bootstrap_nodes.txt`
+  fi
   mkdir -p $datadir
   docker run -d --restart unless-stopped \
     -u $UID:$GID \
