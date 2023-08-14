@@ -115,7 +115,7 @@ ephemery_node_main() {
 
 retention_main() {
   local testnet_dir=$(resolve_path "$testnet_configdir")
-  if [ ! -f $testnet_dir/genesis.json ] | [ ! -f $testnet_dir/retention.vars ]; then
+  if [ ! -f $testnet_dir/genesis.json ]; then
     retention_reset $(get_github_release $testnet_repository)
   else
     retention_check
@@ -127,6 +127,10 @@ retention_check() {
   local current_time=$(date +%s)
   local testnet_timeout genesis_release
 
+  if [ ! -f $testnet_dir/retention.vars ]; then
+    echo "could not find retention.vars - skipping genesis check"
+    return 0
+  fi
   source $testnet_dir/retention.vars
 
   testnet_timeout=$(expr $GENESIS_TIMESTAMP + $GENESIS_RESET_INTERVAL - 300)
