@@ -251,7 +251,6 @@ client_geth_clear() {
 client_geth_init() {
   local datadir=$(resolve_path "$client_geth_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
-  source $confdir/nodevars_env.txt
   mkdir -p $datadir
   docker run --rm \
     -u $UID:$GID \
@@ -381,7 +380,6 @@ client_erigon_clear() {
 client_erigon_init() {
   local datadir=$(resolve_path "$client_erigon_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
-  source $confdir/nodevars_env.txt
   mkdir -p $datadir
   docker run --rm \
     -u $UID:$GID \
