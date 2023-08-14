@@ -183,6 +183,7 @@ call_client_fn() {
 client_geth_name="geth"
 client_geth_image="ethereum/client-go:stable"
 client_geth_datadir="~base/geth"
+client_geth_extra_args=""
 client_geth_start() {
   local datadir=$(resolve_path "$client_geth_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -218,7 +219,8 @@ client_geth_start() {
     --nat=extip:$extip \
     --syncmode=full \
     --bootnodes "${BOOTNODE_ENODE_LIST}" \
-    --networkid ${CHAIN_ID}
+    --networkid ${CHAIN_ID} \
+    $client_geth_extra_args
 }
 client_geth_stop() {
   docker stop $client_geth_name
@@ -253,6 +255,7 @@ client_geth_init() {
 client_besu_name="besu"
 client_besu_image="hyperledger/besu:latest"
 client_besu_datadir="~base/besu"
+client_besu_extra_args=""
 client_besu_start() {
   local datadir=$(resolve_path "$client_besu_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -290,7 +293,8 @@ client_besu_start() {
     --engine-host-allowlist=* \
     --genesis-file=/config/besu.json \
     --bootnodes="${BOOTNODE_ENODE_LIST}" \
-    --sync-mode=FULL
+    --sync-mode=FULL \
+    $client_besu_extra_args
 }
 client_besu_stop() {
   docker stop $client_besu_name
@@ -307,6 +311,7 @@ client_besu_clear() {
 client_erigon_name="erigon"
 client_erigon_image="thorax/erigon:stable"
 client_erigon_datadir="~base/erigon"
+client_erigon_extra_args=""
 client_erigon_start() {
   local datadir=$(resolve_path "$client_erigon_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -347,7 +352,8 @@ client_erigon_start() {
     --authrpc.vhosts=* \
     --prune=htc \
     --bootnodes "${BOOTNODE_ENODE_LIST}" \
-    --networkid ${CHAIN_ID}
+    --networkid ${CHAIN_ID} \
+    $client_erigon_extra_args
 }
 client_erigon_stop() {
   docker stop $client_erigon_name
@@ -379,6 +385,7 @@ client_erigon_init() {
 client_nethermind_name="nethermind"
 client_nethermind_image="nethermind/nethermind:latest"
 client_nethermind_datadir="~base/nethermind"
+client_nethermind_extra_args=""
 client_nethermind_start() {
   local datadir=$(resolve_path "$client_nethermind_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -421,7 +428,8 @@ client_nethermind_start() {
     --config=none.cfg \
     --Init.ChainSpecPath=/config/chainspec.json \
     --JsonRpc.EnabledModules=Eth,Subscribe,Trace,TxPool,Web3,Personal,Proof,Net,Parity,Health,Rpc,Debug,Admin \
-    --Discovery.Bootnodes="${BOOTNODE_ENODE_LIST}"
+    --Discovery.Bootnodes="${BOOTNODE_ENODE_LIST}" \
+    $client_nethermind_extra_args
 }
 client_nethermind_stop() {
   docker stop $client_nethermind_name
@@ -438,6 +446,7 @@ client_nethermind_clear() {
 client_ethereumjs_name="ethereumjs"
 client_ethereumjs_image="g11tech/ethereumjs:latest"
 client_ethereumjs_datadir="~base/ethereumjs"
+client_ethereumjs_extra_args=""
 client_ethereumjs_start() {
   local datadir=$(resolve_path "$client_ethereumjs_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -476,7 +485,8 @@ client_ethereumjs_start() {
     --syncMode=full \
     --maxPeers=75 \
     --isSingleNode=true \
-    --bootnodes="${BOOTNODE_ENODE_LIST}"
+    --bootnodes="${BOOTNODE_ENODE_LIST}" \
+    $client_ethereumjs_extra_args
 }
 client_ethereumjs_stop() {
   docker stop $client_ethereumjs_name
@@ -494,6 +504,7 @@ client_ethereumjs_clear() {
 client_lighthouse_name="lighthouse"
 client_lighthouse_image="sigp/lighthouse:latest"
 client_lighthouse_datadir="~base/lighthouse"
+client_lighthouse_extra_args=""
 client_lighthouse_start() {
   local datadir=$(resolve_path "$client_lighthouse_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -532,7 +543,8 @@ client_lighthouse_start() {
     --execution-jwt=/execution-auth.jwt \
     --execution-endpoint=${execution_url} \
     --testnet-dir /config \
-    --boot-nodes=${BOOTNODE_ENR_LIST}
+    --boot-nodes=${BOOTNODE_ENR_LIST} \
+    $client_lighthouse_extra_args
 }
 client_lighthouse_stop() {
   docker stop $client_lighthouse_name
@@ -549,6 +561,7 @@ client_lighthouse_clear() {
 client_prysm_name="prysm"
 client_prysm_image="gcr.io/prysmaticlabs/prysm/beacon-chain:stable"
 client_prysm_datadir="~base/prysm"
+client_prysm_extra_args=""
 client_prysm_start() {
   local datadir=$(resolve_path "$client_prysm_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -590,7 +603,8 @@ client_prysm_start() {
     --contract-deployment-block=${dcblock} \
     --min-sync-peers=1 \
     --pprof \
-    --bootstrap-node=${BOOTNODE_ENR}
+    --bootstrap-node=${BOOTNODE_ENR} \
+    $client_prysm_extra_args
 }
 client_prysm_stop() {
   docker stop $client_prysm_name
@@ -607,6 +621,7 @@ client_prysm_clear() {
 client_teku_name="teku"
 client_teku_image="consensys/teku:latest"
 client_teku_datadir="~base/teku"
+client_teku_extra_args=""
 client_teku_start() {
   local datadir=$(resolve_path "$client_teku_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -645,7 +660,8 @@ client_teku_start() {
     --network=/config/config.yaml \
     --initial-state=/config/genesis.ssz \
     --p2p-peer-upper-bound=100 \
-    --p2p-discovery-bootnodes=${BOOTNODE_ENR_LIST}
+    --p2p-discovery-bootnodes=${BOOTNODE_ENR_LIST} \
+    $client_teku_extra_args
 }
 client_teku_stop() {
   docker stop $client_teku_name
@@ -662,6 +678,7 @@ client_teku_clear() {
 client_lodestar_name="lodestar"
 client_lodestar_image="chainsafe/lodestar:latest"
 client_lodestar_datadir="~base/lodestar"
+client_lodestar_extra_args=""
 client_lodestar_start() {
   local datadir=$(resolve_path "$client_lodestar_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -703,7 +720,8 @@ client_lodestar_start() {
     --rest.namespace="*" \
     --network.connectToDiscv5Bootnodes \
     --nat=true \
-    --bootnodes=${BOOTNODE_ENR_LIST}
+    --bootnodes=${BOOTNODE_ENR_LIST} \
+    $client_lodestar_extra_args
 }
 client_lodestar_stop() {
   docker stop $client_lodestar_name
@@ -720,6 +738,7 @@ client_lodestar_clear() {
 client_nimbus_name="nimbus"
 client_nimbus_image="statusim/nimbus-eth2:amd64-latest"
 client_nimbus_datadir="~base/nimbus"
+client_nimbus_extra_args=""
 client_nimbus_start() {
   local datadir=$(resolve_path "$client_nimbus_datadir")
   local confdir=$(resolve_path "$testnet_configdir")
@@ -760,7 +779,8 @@ client_nimbus_start() {
     --network=/config \
     --validator-monitor-auto=false \
     --doppelganger-detection=off \
-    --bootstrap-node=${BOOTNODE_ENR}
+    --bootstrap-node=${BOOTNODE_ENR} \
+    $client_nimbus_extra_args
 }
 client_nimbus_stop() {
   docker stop $client_nimbus_name
